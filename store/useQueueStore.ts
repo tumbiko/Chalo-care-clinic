@@ -33,7 +33,8 @@ interface QueueState {
   setActiveUser: (user: { id: string; name: string; email: string; role: "PATIENT" | "DOCTOR" | "ADMIN" } | null) => void;
   addNotification: (text: string) => void;
   markNotificationsAsRead: () => void;
-  sendMessage: (senderId: string, receiverId: string, content: string) => void;
+  sendMessage: (senderId: string, receiverId: string, content: string) => Promise<void>;
+  fetchMessages: (senderId: string, receiverId: string) => Promise<void>;
   advanceQueue: (doctorId: string) => void;
   completeAppointment: (aptId: string, diagnosis: string, prescription: string) => void;
   bookAppointment: (doctorId: string, slot: string, symptoms: string) => void;
@@ -79,18 +80,59 @@ export const useQueueStore = create<QueueState>((set) => ({
     notifications: state.notifications.map(n => ({ ...n, read: true }))
   })),
 
-  sendMessage: (senderId, receiverId, content) => set((state) => ({
-    messages: [
-      ...state.messages,
-      { 
-        id: `msg-${Date.now()}`, 
-        senderId, 
-        receiverId, 
-        content, 
-        createdAt: new Date().toISOString() 
+  sendMessage: async (senderId, receiverId, content) => {
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg = {
+      id: tempId,
+      senderId,
+      receiverId,
+      content,
+      createdAt: new Date().toISOString()
+    };
+
+    // Optimistically show in local store first
+    set((state) => ({
+      messages: [...state.messages, optimisticMsg]
+    }));
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senderId, receiverId, content })
+      });
+
+      if (res.ok) {
+        const savedMsg = await res.json();
+        set((state) => ({
+          messages: state.messages.map(m => m.id === tempId ? savedMsg : m)
+        }));
       }
-    ]
-  })),
+    } catch (error) {
+      console.error("Failed to send message via API:", error);
+    }
+  },
+
+  fetchMessages: async (senderId, receiverId) => {
+    try {
+      const res = await fetch(`/api/chat?senderId=${senderId}&receiverId=${receiverId}`);
+      if (res.ok) {
+        const newMsgs = await res.json();
+        set((state) => {
+          // Filter out existing messages between these two users to avoid duplicates
+          const otherMsgs = state.messages.filter(
+            m => !((m.senderId === senderId && m.receiverId === receiverId) ||
+                   (m.senderId === receiverId && m.receiverId === senderId))
+          );
+          return {
+            messages: [...otherMsgs, ...newMsgs]
+          };
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch messages via API:", error);
+    }
+  },
 
   advanceQueue: (doctorId) => set((state) => {
     const docQueue = state.queue.filter(q => q.doctorId === doctorId && q.status !== "COMPLETED" && q.status !== "SKIPPED");

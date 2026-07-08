@@ -17,7 +17,8 @@ import {
   Star,
   FileText,
   Clock,
-  ArrowRight
+  ArrowRight,
+  MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -33,6 +34,7 @@ function DoctorDashboardContent() {
     queue, 
     messages, 
     sendMessage, 
+    fetchMessages,
     advanceQueue, 
     completeAppointment 
   } = useQueueStore();
@@ -62,6 +64,51 @@ function DoctorDashboardContent() {
   // Doctor Queue
   const doctorQueue = queue.filter(q => q.doctorId === currentDoctor?.id && (q.status === "WAITING" || q.status === "ACTIVE"));
   const activeQueuePatient = doctorQueue.find(q => q.status === "ACTIVE");
+
+  // Polling for chat messages (Doctor side - Consultations tab)
+  useEffect(() => {
+    if (activeTab !== "consultations" || !currentDoctor || !activeQueuePatient) return;
+    fetchMessages(currentDoctor.id, activeQueuePatient.patientId);
+    const interval = setInterval(() => {
+      fetchMessages(currentDoctor.id, activeQueuePatient.patientId);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [activeTab, currentDoctor, activeQueuePatient, fetchMessages]);
+
+  // Chat tab state
+  const [chatPatientId, setChatPatientId] = useState("");
+  const [doctorChatInput, setDoctorChatInput] = useState("");
+
+  // Polling for chat messages (Doctor side - Chat tab)
+  useEffect(() => {
+    if (activeTab !== "chat" || !currentDoctor || !chatPatientId) return;
+    fetchMessages(currentDoctor.id, chatPatientId);
+    const interval = setInterval(() => {
+      fetchMessages(currentDoctor.id, chatPatientId);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [activeTab, currentDoctor, chatPatientId, fetchMessages]);
+
+  const handleDoctorSendChat = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!doctorChatInput.trim() || !chatPatientId || !currentDoctor) return;
+    sendMessage(currentDoctor.id, chatPatientId, doctorChatInput);
+    setDoctorChatInput("");
+  };
+
+  // Build a unique patient contact list from queue + appointments
+  const patientContacts = [
+    ...new Map(
+      [
+        ...queue
+          .filter(q => q.doctorId === currentDoctor?.id)
+          .map(q => ({ id: q.patientId, name: q.patientName, avatar: q.patientAvatar || "" })),
+        ...appointments
+          .filter(a => a.doctorId === currentDoctor?.id)
+          .map(a => ({ id: a.patientId, name: a.patientName, avatar: a.patientAvatar || "" }))
+      ].map(p => [p.id, p])
+    ).values()
+  ];
 
   const handleNextInQueue = () => {
     if (currentDoctor) {
@@ -499,6 +546,135 @@ function DoctorDashboardContent() {
           <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
             Clinic consultation dashboards sync monthly revenue streams, patient distributions, average ratings, and wait durations. Refer to the admin console for clinic-wide telemetry charts.
           </p>
+        </div>
+      )}
+
+      {/* Tab 5: Chat with Patients */}
+      {activeTab === "chat" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg h-[580px] flex">
+
+          {/* Left panel: patient contact list */}
+          <div className="w-1/3 border-r border-border/50 flex flex-col bg-muted/20">
+            <div className="p-4 border-b border-border/50 flex items-center gap-2 bg-card">
+              <MessageSquare className="w-4 h-4 text-primary" />
+              <span className="text-xs font-bold text-foreground">Patient Contacts</span>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {patientContacts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full py-10 gap-2 text-center">
+                  <Users className="w-8 h-8 text-muted-foreground/30" />
+                  <p className="text-[11px] text-muted-foreground px-4">No patient contacts yet. Patients will appear here once they book or join your queue.</p>
+                </div>
+              ) : (
+                patientContacts.map(patient => (
+                  <button
+                    key={patient.id}
+                    onClick={() => setChatPatientId(patient.id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+                      chatPatientId === patient.id
+                        ? "bg-primary/10 border border-primary/20"
+                        : "hover:bg-muted/50 border border-transparent"
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
+                      {patient.name.charAt(0)}
+                    </div>
+                    <div className="overflow-hidden">
+                      <h4 className="text-xs font-bold text-foreground truncate">{patient.name}</h4>
+                      <p className="text-[9px] text-muted-foreground">Patient</p>
+                    </div>
+                    {chatPatientId === patient.id && (
+                      <span className="ml-auto w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Right panel: chat dialogue */}
+          <div className="flex-1 flex flex-col bg-card">
+            {chatPatientId ? (
+              (() => {
+                const patient = patientContacts.find(p => p.id === chatPatientId);
+                const conversation = messages.filter(
+                  m => (m.senderId === currentDoctor?.id && m.receiverId === chatPatientId) ||
+                       (m.senderId === chatPatientId && m.receiverId === currentDoctor?.id)
+                );
+                return (
+                  <>
+                    {/* Header */}
+                    <div className="p-4 border-b border-border/50 flex items-center gap-3 bg-muted/10">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                        {patient?.name.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-foreground">{patient?.name}</h4>
+                        <span className="text-[9px] text-emerald-500 font-semibold flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                          Encrypted Channel Active
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+                      {conversation.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
+                          <MessageSquare className="w-8 h-8 text-muted-foreground/20" />
+                          <p className="text-[11px] text-muted-foreground">No messages yet. Send the first secure message.</p>
+                        </div>
+                      ) : (
+                        conversation.map(msg => (
+                          <div
+                            key={msg.id}
+                            className={`flex flex-col max-w-[70%] rounded-2xl p-3 text-xs leading-relaxed ${
+                              msg.senderId === currentDoctor?.id
+                                ? "bg-primary text-primary-foreground self-end rounded-tr-none ml-auto"
+                                : "bg-muted border border-border/40 text-foreground self-start rounded-tl-none"
+                            }`}
+                          >
+                            <p>{msg.content}</p>
+                            <span className={`text-[8px] mt-1 self-end ${
+                              msg.senderId === currentDoctor?.id ? "text-primary-foreground/70" : "text-muted-foreground"
+                            }`}>
+                              {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    {/* Input */}
+                    <form onSubmit={handleDoctorSendChat} className="p-4 border-t border-border/50 flex gap-2">
+                      <input
+                        type="text"
+                        value={doctorChatInput}
+                        onChange={e => setDoctorChatInput(e.target.value)}
+                        placeholder="Type a secure message to patient..."
+                        className="flex-1 rounded-lg bg-muted border border-border px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!doctorChatInput.trim()}
+                        className="p-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow disabled:opacity-40"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                      </button>
+                    </form>
+                  </>
+                );
+              })()
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center gap-3">
+                <MessageSquare className="w-10 h-10 text-muted-foreground/30" />
+                <h4 className="text-xs font-bold text-foreground">Select a Patient</h4>
+                <p className="text-[11px] text-muted-foreground max-w-[200px]">Choose a patient from your contacts to open a secure encrypted chat session.</p>
+              </div>
+            )}
+          </div>
+
         </div>
       )}
 

@@ -54,7 +54,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(`/${role.toLowerCase()}`, request.url));
     }
 
-  } catch (error) {
+  } catch {
     // Session token expired or invalid, clear it and redirect to login
     if (!isAuthPage) {
       const response = NextResponse.redirect(new URL("/sign-in", request.url));
@@ -68,8 +68,11 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/patient",
     "/patient/:path*", 
+    "/doctor",
     "/doctor/:path*", 
+    "/admin",
     "/admin/:path*", 
     "/sign-in", 
     "/sign-up"

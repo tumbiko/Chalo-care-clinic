@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.2.1",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -24,6 +25,9 @@
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
@@ -34,6 +38,8 @@
     "eslint-config-next": "16.2.7",
     "prisma": "^6.2.1",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.0",
     "typescript": "^5"
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import React, { useActionState } from "react";
 import Link from "next/link";
 import { signUpAction } from "@/app/actions/auth";
 import { Stethoscope, Key, Mail, User, ShieldAlert, ArrowRight } from "lucide-react";
@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 
 export default function SignUp() {
   const [state, formAction, isPending] = useActionState(signUpAction, null);
-  const [selectedRole, setSelectedRole] = useState("PATIENT");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden py-12 px-6">
@@ -30,7 +29,7 @@ export default function SignUp() {
             <Stethoscope className="w-6 h-6" />
           </div>
           <h2 className="text-xl font-black tracking-tight text-foreground">Create Account</h2>
-          <p className="text-xs text-muted-foreground">Join our digital healthcare platform today.</p>
+          <p className="text-xs text-muted-foreground">Create your patient account to book appointments and access care.</p>
         </div>
 
         {/* Action state error banner */}
@@ -84,27 +83,8 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Account Role</label>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              {(["PATIENT", "DOCTOR", "ADMIN"] as const).map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setSelectedRole(r)}
-                  className={`py-2.5 rounded-xl border text-center text-[10px] font-bold transition-all ${
-                    selectedRole === r
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-muted/50 border-border hover:bg-muted text-foreground"
-                  }`}
-                >
-                  {r.charAt(0) + r.slice(1).toLowerCase()}
-                </button>
-              ))}
-            </div>
-            {/* hidden field to pass role in form */}
-            <input type="hidden" name="role" value={selectedRole} />
-          </div>
+          {/* Role is always PATIENT — doctors are added by the admin */}
+          <input type="hidden" name="role" value="PATIENT" />
 
           <button
             type="submit"

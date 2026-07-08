@@ -61,6 +61,7 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
     DOCTOR: [
       { label: "Overview Panel", href: "/doctor" },
       { label: "Active Consultations", href: "/doctor?tab=consultations" },
+      { label: "Chat with Patients", href: "/doctor?tab=chat" },
       { label: "Schedule Manager", href: "/doctor?tab=schedule" },
       { label: "Analytics Panel", href: "/doctor?tab=analytics" },
     ],
@@ -73,13 +74,26 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
     ],
   };
 
-  const handleRoleSwap = (targetRole: "PATIENT" | "DOCTOR" | "ADMIN") => {
+  const handleRoleSwap = async (targetRole: "PATIENT" | "DOCTOR" | "ADMIN") => {
     const defaultUsers = {
       PATIENT: { id: "pat-1", name: "Alex Rivera", email: "alex@example.com", role: "PATIENT" as const },
       DOCTOR: { id: "doc-5", name: "Dr. Priya Patel", email: "priya@chalocare.com", role: "DOCTOR" as const },
       ADMIN: { id: "admin-1", name: "Administrator", email: "admin@chalocare.com", role: "ADMIN" as const },
     };
-    setActiveUser(defaultUsers[targetRole]);
+    
+    const user = defaultUsers[targetRole];
+    
+    try {
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+    } catch (e) {
+      console.error("Failed to update session cookie for role swap:", e);
+    }
+
+    setActiveUser(user);
     router.push(`/${targetRole.toLowerCase()}`);
   };
 

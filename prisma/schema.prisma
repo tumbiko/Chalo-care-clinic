@@ -14,14 +14,17 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  clerkId   String?  @unique
-  role      Role     @default(PATIENT)
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String    @id @default(uuid())
+  email                String    @unique
+  name                 String?
+  password             String?   // bcrypt hashed — null for Clerk-only users
+  clerkId              String?   @unique
+  role                 Role      @default(PATIENT)
+  avatar               String?
+  passwordResetToken   String?   @unique
+  passwordResetExpiry  DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   patientProfile PatientProfile?
   doctorProfile  DoctorProfile?

@@ -49,6 +49,7 @@ function AdminDashboardContent() {
   // Form states to add new mock Doctor
   const [isAddDocOpen, setIsAddDocOpen] = useState(false);
   const [newDocName, setNewDocName] = useState("");
+  const [newDocEmail, setNewDocEmail] = useState("");
   const [newDocSpecial, setNewDocSpecial] = useState("General Practitioner");
   const [newDocFee, setNewDocFee] = useState("100");
 
@@ -71,34 +72,52 @@ function AdminDashboardContent() {
     }, 800);
   };
 
-  const handleAddDoctor = (e: React.FormEvent) => {
+  const [addDocError, setAddDocError] = useState<string | null>(null);
+  const [addDocLoading, setAddDocLoading] = useState(false);
+
+  const handleAddDoctor = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newDocName.trim()) return;
+    if (!newDocName.trim() || !newDocEmail.trim()) return;
 
-    // Trigger Zustand logic to append doc
-    const newId = `doc-${Date.now()}`;
-    const newDoctorObj = {
-      id: newId,
-      name: newDocName,
-      specialization: newDocSpecial,
-      bio: `Dr. ${newDocName} is a board-certified ${newDocSpecial} committed to patient care.`,
-      fee: parseFloat(newDocFee) || 100,
-      rating: 5.0,
-      experience: 5,
-      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&h=200&fit=crop",
-      isAvailable: true,
-      slots: ["09:00 AM", "10:30 AM", "02:00 PM"]
-    };
+    setAddDocLoading(true);
+    setAddDocError(null);
 
-    // We can directly mutate the Zustand state or push. 
-    // In our store, we have doctors as state, so we update the store
-    useQueueStore.setState((state) => ({
-      doctors: [...state.doctors, newDoctorObj]
-    }));
+    try {
+      const res = await fetch("/api/doctors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newDocName,
+          email: newDocEmail,
+          specialization: newDocSpecial,
+          fee: newDocFee,
+        }),
+      });
 
-    setIsAddDocOpen(false);
-    setNewDocName("");
-    setNewDocFee("100");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAddDocError(data.error || "Failed to create doctor.");
+        setAddDocLoading(false);
+        return;
+      }
+
+      // Add the new doctor to the Zustand store for immediate UI update
+      useQueueStore.setState((state) => ({
+        doctors: [...state.doctors, data.doctor]
+      }));
+
+      addNotification(`✅ Dr. ${newDocName} added. Default password: doctor123`);
+
+      setIsAddDocOpen(false);
+      setNewDocName("");
+      setNewDocEmail("");
+      setNewDocFee("100");
+    } catch {
+      setAddDocError("Network error. Please try again.");
+    } finally {
+      setAddDocLoading(false);
+    }
   };
 
   return (
@@ -240,6 +259,7 @@ function AdminDashboardContent() {
               <thead>
                 <tr className="bg-muted/50 border-b border-border">
                   <th className="p-4 font-bold text-foreground">Practitioner</th>
+                  <th className="p-4 font-bold text-foreground">Email</th>
                   <th className="p-4 font-bold text-foreground">Specialty</th>
                   <th className="p-4 font-bold text-foreground">Session Fee</th>
                   <th className="p-4 font-bold text-foreground">Status</th>
@@ -249,16 +269,19 @@ function AdminDashboardContent() {
               <tbody>
                 {doctors.map((doc) => (
                   <tr key={doc.id} className="border-b border-border hover:bg-muted/10 transition-colors">
-                    <td className="p-4 flex items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={doc.avatar} alt={doc.name} className="w-8 h-8 rounded-full object-cover border" />
-                      <div>
-                        <span className="font-bold text-foreground block">{doc.name}</span>
-                        <span className="text-[10px] text-yellow-500 font-bold flex items-center gap-0.5 mt-0.5">
-                          <Star className="w-3 h-3 fill-yellow-500" /> {doc.rating}
-                        </span>
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={doc.avatar} alt={doc.name} className="w-8 h-8 rounded-full object-cover border" />
+                        <div>
+                          <span className="font-bold text-foreground block">{doc.name}</span>
+                          <span className="text-[10px] text-yellow-500 font-bold flex items-center gap-0.5 mt-0.5">
+                            <Star className="w-3 h-3 fill-yellow-500" /> {doc.rating}
+                          </span>
+                        </div>
                       </div>
                     </td>
+                    <td className="p-4 text-muted-foreground">{(doc as any).email || "—"}</td>
                     <td className="p-4 text-muted-foreground font-medium">{doc.specialization}</td>
                     <td className="p-4 font-bold text-foreground">${doc.fee}</td>
                     <td className="p-4">
@@ -370,6 +393,18 @@ function AdminDashboardContent() {
               </div>
 
               <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-foreground uppercase">Email Address</label>
+                <input
+                  type="email"
+                  value={newDocEmail}
+                  onChange={(e) => setNewDocEmail(e.target.value)}
+                  placeholder="e.g. arthur@chalocare.com"
+                  required
+                  className="rounded-lg bg-muted border border-border p-2.5 text-xs text-foreground focus:outline-none"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold text-foreground uppercase">Specialty Area</label>
                 <select
                   value={newDocSpecial}
@@ -395,11 +430,31 @@ function AdminDashboardContent() {
                 />
               </div>
 
+              {/* Default password hint */}
+              <div className="flex items-center gap-2 rounded-lg bg-amber-500/10 border border-amber-500/20 p-3">
+                <span className="text-amber-500 text-xs">🔑</span>
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 leading-relaxed">
+                  Default login password will be set to <span className="font-mono font-bold">doctor123</span>. The doctor should change this after first login.
+                </p>
+              </div>
+
+              {addDocError && (
+                <p className="text-[10px] text-rose-500 font-semibold">{addDocError}</p>
+              )}
+
               <button
                 type="submit"
-                className="mt-2 w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-md"
+                disabled={addDocLoading}
+                className="mt-2 w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-md disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                Save Practitioner Profile
+                {addDocLoading ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  "Save Practitioner Profile"
+                )}
               </button>
             </form>
           </motion.div>
