@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     } | null;
 
     // Always return success to prevent email enumeration attacks
-    if (!user || !user.password) {
+    if (!user) {
       return NextResponse.json({ success: true });
     }
 

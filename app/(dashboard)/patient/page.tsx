@@ -149,16 +149,16 @@ function PatientDashboardContent() {
           {/* Welcome section */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
-              <h1 className="text-2xl font-black text-foreground">
+              <h1 className="text-3xl font-black text-foreground">
                 Good day, {activeUser?.name || "Patient"}!
               </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-sm text-muted-foreground mt-0.5">
                 Your medical queue metrics and telemetry dashboards are synchronized.
               </p>
             </div>
             <button
               onClick={() => router.push("/patient?tab=appointments")}
-              className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-full bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 shadow-md shadow-primary/20 transition-all"
+              className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 shadow-md shadow-primary/20 transition-all"
             >
               <Plus className="w-3.5 h-3.5" /> Book New Session
             </button>
@@ -175,7 +175,7 @@ function PatientDashboardContent() {
           {/* Core Analytics & Queue details */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-8 bg-card border border-border/60 rounded-2xl p-6 shadow-sm">
-              <h3 className="text-sm font-bold text-foreground">Blood Glucose Levels (mg/dL)</h3>
+              <h3 className="text-base font-bold text-foreground">Blood Glucose Levels (mg/dL)</h3>
               <HealthMetricChart />
             </div>
 
@@ -184,8 +184,8 @@ function PatientDashboardContent() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-8 -mt-8" />
               
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider opacity-75">LIVE WAITING ESTIMATOR</span>
-                <h3 className="text-base font-black mt-1">Virtual Queue Status</h3>
+                <span className="text-xs uppercase font-bold tracking-wider opacity-75">LIVE WAITING ESTIMATOR</span>
+                <h3 className="text-lg font-black mt-1">Virtual Queue Status</h3>
               </div>
 
               {activeQueueEntry ? (
@@ -193,14 +193,14 @@ function PatientDashboardContent() {
                   <div className="w-20 h-20 rounded-full border-4 border-white/20 border-t-white flex items-center justify-center animate-pulse mb-3 bg-white/5">
                     <span className="text-2xl font-black">#{activeQueueEntry.number}</span>
                   </div>
-                  <p className="text-xs font-semibold opacity-90">Estimated Queue Number</p>
+                  <p className="text-sm font-semibold opacity-90">Estimated Queue Number</p>
                   
                   <div className="mt-5 w-full space-y-2.5">
-                    <div className="flex justify-between text-[11px] bg-white/10 p-2.5 rounded-lg">
+                    <div className="flex justify-between text-xs bg-white/10 p-2.5 rounded-lg">
                       <span className="opacity-80">Clinician</span>
                       <span className="font-bold">{activeQueueEntry.doctorName}</span>
                     </div>
-                    <div className="flex justify-between text-[11px] bg-white/10 p-2.5 rounded-lg">
+                    <div className="flex justify-between text-xs bg-white/10 p-2.5 rounded-lg">
                       <span className="opacity-80">Wait Time</span>
                       <span className="font-bold">~{activeQueueEntry.estimatedWaitMinutes} Minutes</span>
                     </div>
@@ -209,14 +209,14 @@ function PatientDashboardContent() {
               ) : (
                 <div className="flex flex-col items-center py-8 text-center gap-2">
                   <Stethoscope className="w-10 h-10 opacity-40" />
-                  <p className="text-xs font-semibold opacity-85">No active queue checkins found.</p>
-                  <p className="text-[10px] opacity-75 max-w-[200px]">Book a virtual checkup slot to join the real-time queueing line.</p>
+                  <p className="text-sm font-semibold opacity-85">No active queue checkins found.</p>
+                  <p className="text-xs opacity-75 max-w-[200px]">Book a virtual checkup slot to join the real-time queueing line.</p>
                 </div>
               )}
 
               <button
                 onClick={() => router.push("/patient?tab=appointments")}
-                className="w-full py-2.5 mt-2 rounded-xl bg-white text-cyan-600 hover:bg-slate-50 text-xs font-bold transition-all shadow"
+                className="w-full py-2.5 mt-2 rounded-xl bg-white text-cyan-600 hover:bg-slate-50 text-sm font-bold transition-all shadow"
               >
                 Join Queue Line
               </button>
@@ -225,7 +225,7 @@ function PatientDashboardContent() {
 
           {/* Recent Consultations Table */}
           <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-sm font-bold text-foreground mb-4">Recent Clinic Consultations</h3>
+            <h3 className="text-base font-bold text-foreground mb-4">Recent Clinic Consultations</h3>
             <AppointmentTable />
           </div>
 
@@ -239,13 +239,13 @@ function PatientDashboardContent() {
           {/* Left panel: booking form */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <h3 className="font-bold text-sm text-foreground border-b border-border/50 pb-3.5">
+              <h3 className="font-bold text-base text-foreground border-b border-border/50 pb-3.5">
                 Book Virtual Consultation
               </h3>
 
               <form onSubmit={handleBookSession} className="flex flex-col gap-4 mt-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase">Select Practitioner</label>
+                  <label className="text-xs font-bold text-foreground uppercase">Select Practitioner</label>
                   <select
                     value={selectedDoctorId}
                     onChange={(e) => {
@@ -253,7 +253,7 @@ function PatientDashboardContent() {
                       setSelectedSlot("");
                     }}
                     required
-                    className="w-full rounded-lg bg-muted border border-border p-2.5 text-xs text-foreground focus:outline-none focus:border-primary"
+                    className="w-full rounded-lg bg-muted border border-border p-2.5 text-sm text-foreground focus:outline-none focus:border-primary"
                   >
                     <option value="">-- Choose Doctor --</option>
                     {doctors.map(d => (
@@ -266,14 +266,14 @@ function PatientDashboardContent() {
 
                 {selectedDoctorId && (
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold text-foreground uppercase">Available Slots</label>
+                    <label className="text-xs font-bold text-foreground uppercase">Available Slots</label>
                     <div className="grid grid-cols-3 gap-2 mt-1">
                       {doctors.find(d => d.id === selectedDoctorId)?.slots.map(slot => (
                         <button
                           key={slot}
                           type="button"
                           onClick={() => setSelectedSlot(slot)}
-                          className={`py-2 px-1 rounded-lg border text-center text-[10px] font-bold transition-all ${
+                          className={`py-2 px-1 rounded-lg border text-center text-xs font-bold transition-all ${
                             selectedSlot === slot 
                               ? "bg-primary text-primary-foreground border-primary" 
                               : "bg-muted border-border hover:bg-muted/70 text-foreground"
@@ -287,20 +287,20 @@ function PatientDashboardContent() {
                 )}
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase">Describe Symptoms</label>
+                  <label className="text-xs font-bold text-foreground uppercase">Describe Symptoms</label>
                   <textarea
                     value={symptomsInput}
                     onChange={(e) => setSymptomsInput(e.target.value)}
                     placeholder="Describe chest tightness, muscle aches, skincare concerns..."
                     rows={3}
-                    className="w-full rounded-lg bg-muted border border-border p-3 text-xs text-foreground focus:outline-none focus:border-primary resize-none"
+                    className="w-full rounded-lg bg-muted border border-border p-3 text-sm text-foreground focus:outline-none focus:border-primary resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={!selectedDoctorId || !selectedSlot || showBookingSuccess}
-                  className="w-full mt-2 py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-md flex items-center justify-center gap-1.5"
+                  className="w-full mt-2 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-md flex items-center justify-center gap-1.5"
                 >
                   {showBookingSuccess ? (
                     <>
@@ -318,7 +318,7 @@ function PatientDashboardContent() {
           {/* Right panel: Doctor list & credentials */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <h3 className="font-bold text-sm text-foreground border-b border-border/50 pb-3.5">
+              <h3 className="font-bold text-base text-foreground border-b border-border/50 pb-3.5">
                 Our Medical Staff Registry
               </h3>
 
@@ -329,15 +329,15 @@ function PatientDashboardContent() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={d.avatar} alt={d.name} className="w-10 h-10 rounded-full object-cover border" />
                       <div>
-                        <h4 className="text-xs font-bold text-foreground">{d.name}</h4>
-                        <p className="text-[10px] font-semibold text-cyan-600 dark:text-cyan-400 mt-0.5">{d.specialization}</p>
-                        <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed max-w-sm">{d.bio}</p>
+                        <h4 className="text-sm font-bold text-foreground">{d.name}</h4>
+                        <p className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 mt-0.5">{d.specialization}</p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed max-w-sm">{d.bio}</p>
                         <div className="flex items-center gap-3.5 mt-2">
-                          <span className="text-[9px] font-bold text-muted-foreground flex items-center gap-0.5">
+                          <span className="text-xs font-bold text-muted-foreground flex items-center gap-0.5">
                             <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
                             {d.rating} Rating
                           </span>
-                          <span className="text-[9px] font-bold text-muted-foreground">
+                          <span className="text-xs font-bold text-muted-foreground">
                             {d.experience} Yrs Experience
                           </span>
                         </div>
@@ -345,13 +345,13 @@ function PatientDashboardContent() {
                     </div>
                     
                     <div className="flex sm:flex-col items-center sm:items-end justify-between border-t sm:border-t-0 border-border/40 pt-3.5 sm:pt-0">
-                      <span className="text-xs font-bold text-foreground">${d.fee} / checkup</span>
+                      <span className="text-sm font-bold text-foreground">${d.fee} / checkup</span>
                       <button
                         onClick={() => {
                           setSelectedDoctorId(d.id);
                           setSelectedSlot("");
                         }}
-                        className="sm:mt-2.5 px-3 py-1.5 rounded-lg border border-primary text-primary hover:bg-primary hover:text-primary-foreground text-[10px] font-bold transition-all"
+                        className="sm:mt-2.5 px-3 py-1.5 rounded-lg border border-primary text-primary hover:bg-primary hover:text-primary-foreground text-xs font-bold transition-all"
                       >
                         Book
                       </button>
@@ -376,31 +376,31 @@ function PatientDashboardContent() {
                 <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
                   <Stethoscope className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-sm text-foreground">
+                <h3 className="font-bold text-base text-foreground">
                   AI Symptom Analyzer (Interactive Dev Mode)
                 </h3>
               </div>
 
               <form onSubmit={handleSymptomAnalysis} className="flex flex-col gap-4 mt-5">
-                <p className="text-[11px] text-muted-foreground leading-normal">
+                <p className="text-sm text-muted-foreground leading-normal">
                   Describe what symptoms you are experiencing (e.g. chest pain, severe tension headache, itchy skin rashes) to find recommendations.
                 </p>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase">Describe how you feel:</label>
+                  <label className="text-xs font-bold text-foreground uppercase">Describe how you feel:</label>
                   <textarea
                     value={symptomText}
                     onChange={(e) => setSymptomText(e.target.value)}
                     placeholder="Type details here..."
                     rows={4}
                     required
-                    className="w-full rounded-lg bg-muted border border-border p-3 text-xs text-foreground focus:outline-none focus:border-primary resize-none"
+                    className="w-full rounded-lg bg-muted border border-border p-3 text-sm text-foreground focus:outline-none focus:border-primary resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={!symptomText.trim()}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-md"
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-md"
                 >
                   Analyze Symptoms & Match specialty
                 </button>
@@ -412,7 +412,7 @@ function PatientDashboardContent() {
           <div className="lg:col-span-6 flex flex-col gap-6">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm h-full flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-sm text-foreground border-b border-border/50 pb-3.5">
+                <h3 className="font-bold text-base text-foreground border-b border-border/50 pb-3.5">
                   Clinical Triage Report
                 </h3>
 
@@ -423,15 +423,15 @@ function PatientDashboardContent() {
                     className="mt-5 space-y-4"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-foreground">Matched Specialty:</span>
-                      <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase">
+                      <span className="text-sm font-bold text-foreground">Matched Specialty:</span>
+                      <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary uppercase">
                         {checkerResult.specialty}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-foreground">Triage Severity:</span>
-                      <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                      <span className="text-sm font-bold text-foreground">Triage Severity:</span>
+                      <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase ${
                         checkerResult.severity === "HIGH" 
                           ? "bg-rose-500/15 text-rose-500" 
                           : checkerResult.severity === "MEDIUM"
@@ -442,16 +442,16 @@ function PatientDashboardContent() {
                       </span>
                     </div>
 
-                    <div className="p-3 bg-muted/40 rounded-xl border text-[11px] leading-relaxed text-foreground">
+                    <div className="p-3 bg-muted/40 rounded-xl border text-xs leading-relaxed text-foreground">
                       <span className="font-bold block mb-1">Urgency Advice:</span>
                       {checkerResult.urgency}
                     </div>
 
                     <div>
-                      <span className="text-[10px] font-bold text-foreground uppercase tracking-wider block mb-2">Self-Care Guidelines:</span>
+                      <span className="text-xs font-bold text-foreground uppercase tracking-wider block mb-2">Self-Care Guidelines:</span>
                       <ul className="space-y-2">
                         {checkerResult.advice.map((item: string, idx: number) => (
-                          <li key={idx} className="text-[10px] text-muted-foreground flex items-start gap-2">
+                          <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2">
                             <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0" />
                             {item}
                           </li>
@@ -463,8 +463,8 @@ function PatientDashboardContent() {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center gap-3 h-full">
                     <ShieldAlert className="w-10 h-10 text-muted-foreground/30 animate-bounce" />
-                    <p className="text-xs font-bold text-foreground">Analyzer Ready</p>
-                    <p className="text-[11px] text-muted-foreground max-w-xs leading-normal">
+                    <p className="text-sm font-bold text-foreground">Analyzer Ready</p>
+                    <p className="text-xs text-muted-foreground max-w-xs leading-normal">
                       Input your current diagnostic details in the analyzer form, and clinical advice will be rendered securely here.
                     </p>
                   </div>
@@ -479,7 +479,7 @@ function PatientDashboardContent() {
                       setSelectedDoctorId(doc.id);
                       router.push("/patient?tab=appointments");
                     }}
-                    className="w-full py-2.5 rounded-lg bg-cyan-600 text-white text-xs font-bold hover:bg-cyan-700 transition-all flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-lg bg-cyan-600 text-white text-sm font-bold hover:bg-cyan-700 transition-all flex items-center justify-center gap-1.5"
                   >
                     Book Consultation with {checkerResult.recommendedDoctor}
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -497,14 +497,14 @@ function PatientDashboardContent() {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center border-b border-border/50 pb-4">
             <div>
-              <h2 className="text-base font-bold text-foreground">Encrypted Medical Records Vault</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">HIPAA-compliant document management with client-side decryption.</p>
+              <h2 className="text-lg font-bold text-foreground">Encrypted Medical Records Vault</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">HIPAA-compliant document management with client-side decryption.</p>
             </div>
             <button
               onClick={() => {
                 alert("This simulation allows you to download and review medical prescriptions dynamically!");
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold"
             >
               Upload Report
             </button>
@@ -521,8 +521,8 @@ function PatientDashboardContent() {
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-foreground">{file.name}</h4>
-                      <span className="text-[10px] text-muted-foreground">{file.date}</span>
+                      <h4 className="text-sm font-bold text-foreground">{file.name}</h4>
+                      <span className="text-xs text-muted-foreground">{file.date}</span>
                     </div>
                   </div>
 
@@ -535,11 +535,11 @@ function PatientDashboardContent() {
                   </button>
                 </div>
 
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/40 text-[11px] leading-relaxed">
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/40 text-xs leading-relaxed">
                   <span className="font-bold text-foreground block mb-1">
                     {file.decrypted ? "Decrypted Content:" : "Encrypted Content (Ciphertext):"}
                   </span>
-                  <p className={`font-mono text-[9px] break-all ${file.decrypted ? "text-foreground font-sans text-[11px]" : "text-muted-foreground"}`}>
+                  <p className={`font-mono text-xs break-all ${file.decrypted ? "text-foreground font-sans text-xs" : "text-muted-foreground"}`}>
                     {file.decrypted ? decrypt(file.content) : file.content}
                   </p>
                 </div>
@@ -557,13 +557,13 @@ function PatientDashboardContent() {
                         <Stethoscope className="w-5 h-5" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-foreground">Prescription - {apt.doctorName}</h4>
-                        <span className="text-[10px] text-muted-foreground">{new Date(apt.dateTime).toLocaleDateString()}</span>
+                        <h4 className="text-sm font-bold text-foreground">Prescription - {apt.doctorName}</h4>
+                        <span className="text-xs text-muted-foreground">{new Date(apt.dateTime).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10 text-[11px] leading-relaxed">
+                  <div className="p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10 text-xs leading-relaxed">
                     <span className="font-bold text-foreground block mb-1">Diagnosis:</span>
                     <p className="text-muted-foreground mb-2">{apt.diagnosis}</p>
                     <span className="font-bold text-foreground block mb-1">Prescribed Meds:</span>
@@ -583,7 +583,7 @@ function PatientDashboardContent() {
           {/* Left panel: doctor list */}
           <div className="w-1/3 border-r border-border/50 flex flex-col bg-muted/20">
             <div className="p-4 border-b border-border/50 flex items-center bg-card">
-              <span className="text-xs font-bold text-foreground">Practitioner Contacts</span>
+              <span className="text-sm font-bold text-foreground">Practitioner Contacts</span>
             </div>
             
             <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -598,8 +598,8 @@ function PatientDashboardContent() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={d.avatar} alt={d.name} className="w-8 h-8 rounded-full object-cover border" />
                   <div className="overflow-hidden">
-                    <h4 className="text-xs font-bold text-foreground truncate">{d.name}</h4>
-                    <p className="text-[9px] text-muted-foreground truncate">{d.specialization}</p>
+                    <h4 className="text-sm font-bold text-foreground truncate">{d.name}</h4>
+                    <p className="text-xs text-muted-foreground truncate">{d.specialization}</p>
                   </div>
                 </button>
               ))}
@@ -619,8 +619,8 @@ function PatientDashboardContent() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={doc?.avatar} alt={doc?.name} className="w-8 h-8 rounded-full object-cover border" />
                       <div>
-                        <h4 className="text-xs font-bold text-foreground">{doc?.name}</h4>
-                        <span className="text-[9px] text-muted-foreground font-semibold">{doc?.specialization}</span>
+                        <h4 className="text-sm font-bold text-foreground">{doc?.name}</h4>
+                        <span className="text-xs text-muted-foreground font-semibold">{doc?.specialization}</span>
                       </div>
                     </div>
 
@@ -631,14 +631,14 @@ function PatientDashboardContent() {
                         .map(msg => (
                           <div
                             key={msg.id}
-                            className={`flex flex-col max-w-[70%] rounded-2xl p-3 text-xs leading-relaxed ${
+                            className={`flex flex-col max-w-[70%] rounded-2xl p-3 text-sm leading-relaxed ${
                               msg.senderId === activeUser?.id
                                 ? "bg-primary text-primary-foreground self-end rounded-tr-none ml-auto"
                                 : "bg-muted border border-border/40 text-foreground self-start rounded-tl-none"
                             }`}
                           >
                             <p>{msg.content}</p>
-                            <span className={`text-[8px] mt-1 self-end ${
+                            <span className={`text-[10px] mt-1 self-end ${
                               msg.senderId === activeUser?.id ? "text-primary-foreground/70" : "text-muted-foreground"
                             }`}>
                               {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -654,7 +654,7 @@ function PatientDashboardContent() {
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Type a secure message..."
-                        className="flex-1 rounded-lg bg-muted border border-border px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary"
+                        className="flex-1 rounded-lg bg-muted border border-border px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
                       />
                       <button
                         type="submit"
@@ -670,8 +670,8 @@ function PatientDashboardContent() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center gap-3">
                 <MessageSquare className="w-10 h-10 text-muted-foreground/30" />
-                <h4 className="text-xs font-bold text-foreground">Select a Doctor</h4>
-                <p className="text-[11px] text-muted-foreground">Choose a medical contact on the sidebar to initiate a secure encrypted session.</p>
+                <h4 className="text-sm font-bold text-foreground">Select a Doctor</h4>
+                <p className="text-xs text-muted-foreground">Choose a medical contact on the sidebar to initiate a secure encrypted session.</p>
               </div>
             )}
 

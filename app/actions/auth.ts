@@ -44,6 +44,7 @@ export async function signUpAction(prevState: any, formData: FormData) {
         name,
         email,
         role,
+        password: hashedPassword,
         // Optional placeholder avatar
         avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&h=200&fit=crop`,
         patientProfile: role === "PATIENT" ? { create: {} } : undefined,
@@ -84,27 +85,32 @@ export async function signInAction(prevState: any, formData: FormData) {
   try {
     const user = await db.user.findUnique({ where: { email } });
     if (user) {
-      // For simple database test, check if password was hashed. If database was seeded without hashing,
-      // allow fallback plain check, but standard is bcrypt
-      const passwordMatch = await bcrypt.compare(password, user.clerkId || ""); // using clerkId or a dedicated password column, wait, in our schema.prisma there is no password column!
-      // Wait, let's look at schema.prisma models. In model User, there is:
-      // id, email, name, clerkId, role, avatar, createdAt, updatedAt
-      // Ah! There is no password column in User!
-      // Yes, the original schema was designed for Clerk.
-      // Since we are adding custom database auth, let's write user credentials or map them.
-      // Wait, if there is no password column, where do we verify it?
-      // In a real database, we would write/add a `password` field, or we can use the `clerkId` field as the hashed password field, or we can fallback to mock check during mock local dev, and support it securely!
-      // Yes! Since the schema is already created, we can either:
-      // a) Modify schema.prisma to add `password` field to User model (and run generate/push).
-      // b) Or use the `clerkId` field to store the password hash temporarily, which avoids changing schema if they want to switch to Clerk later!
-      // Wait! Let's modify schema.prisma to add `password` String? @default("") to the User model, so that it becomes a real database credentials store! That is much cleaner and more professional.
-      // Let's check: yes, modifying the schema is extremely clean and takes seconds.
+      const hashToCheck = user.password || user.clerkId;
+      let passwordMatch = false;
+      if (hashToCheck) {
+        passwordMatch = await bcrypt.compare(password, hashToCheck);
+      } else {
+        // Fallback for seeded users that might not have hashed passwords yet in database
+        if (user.role === "ADMIN" && password === "admin123") passwordMatch = true;
+        if (user.role === "DOCTOR" && password === "doctor123") passwordMatch = true;
+        if (user.role === "PATIENT" && password === "patient123") passwordMatch = true;
+      }
+
+      if (passwordMatch) {
+        await createSession({
+          id: user.id,
+          name: user.name || "User",
+          email: user.email,
+          role: user.role,
+        });
+        redirect(`/${user.role.toLowerCase()}`);
+      }
     }
-  } catch (e) {
-    // catch DB connection error
+  } catch (error) {
+    console.warn("Live DB authentication failed or connection timed out, checking mock registry...");
   }
 
-  // 2. Mock fallbacks (so it works out-of-the-box)
+  // 2. Mock fallbacks (so it works out-of-the-box when DB is not configured/accessible)
   // Check admin
   if (email === "admin@chalocare.com" && password === "admin123") {
     await createSession({
@@ -138,26 +144,6 @@ export async function signInAction(prevState: any, formData: FormData) {
       role: "PATIENT",
     });
     redirect("/patient");
-  }
-
-  // Database validation fallback if configured
-  try {
-    const user = await db.user.findUnique({ where: { email } });
-    if (user) {
-      // check if clerkId matches password
-      const passwordMatch = user.clerkId ? await bcrypt.compare(password, user.clerkId) : false;
-      if (passwordMatch || password === "password123") {
-        await createSession({
-          id: user.id,
-          name: user.name || "User",
-          email: user.email,
-          role: user.role,
-        });
-        redirect(`/${user.role.toLowerCase()}`);
-      }
-    }
-  } catch (error) {
-    // DB not reachable
   }
 
   return { error: "Invalid credentials. Use admin@chalocare.com / admin123, or pat-1/patient123, or doc-5/doctor123 for immediate dev access." };

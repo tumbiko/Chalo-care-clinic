@@ -115,7 +115,7 @@ export default function Hero() {
                                 <span className="w-3 h-3 rounded-full bg-green-500" />
                                 <span className="text-xs text-muted-foreground font-mono ml-2">portal.chalocare.com</span>
                             </div>
-                            <div className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[10px] font-bold tracking-wider uppercase">
+                            <div className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-bold tracking-wider uppercase">
                                 Patient Console
                             </div>
                         </div>
@@ -129,7 +129,7 @@ export default function Hero() {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl font-black mt-2">02 <span className="text-xs font-normal text-muted-foreground">patients ahead</span></h3>
-                                    <p className="text-[11px] text-muted-foreground mt-1">Wait: <span className="text-cyan-600 dark:text-cyan-400 font-bold">12 mins</span></p>
+                                    <p className="text-xs text-muted-foreground mt-1">Wait: <span className="text-cyan-600 dark:text-cyan-400 font-bold">12 mins</span></p>
                                 </div>
                                 <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden mt-3">
                                     <div className="bg-cyan-500 h-full w-[75%]" />
@@ -161,7 +161,7 @@ export default function Hero() {
                                     </div>
                                     <div>
                                         <h4 className="text-sm font-bold">Medical Vault Encrypted</h4>
-                                        <p className="text-[11px] text-slate-300">HIPAA Compliant AES-256 Active</p>
+                                        <p className="text-xs text-slate-300">HIPAA Compliant AES-256 Active</p>
                                     </div>
                                 </div>
                                 <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">SECURE</span>
@@ -181,10 +181,10 @@ export default function Hero() {
                                     </div>
                                     <div>
                                         <h5 className="text-xs font-bold">Dr. Sarah Jenkins</h5>
-                                        <p className="text-[10px] text-muted-foreground">Cardiologist</p>
+                                        <p className="text-xs text-muted-foreground">Cardiologist</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-muted">
+                                <div className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted">
                                     <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" /> 4.9
                                 </div>
                             </div>
@@ -194,11 +194,11 @@ export default function Hero() {
                     {/* Floating badges */}
                     <div className="absolute -top-4 -right-4 p-3 rounded-xl bg-card/90 backdrop-blur-md border border-border shadow-lg hidden sm:flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[11px] font-semibold">Consultation Room Active</span>
+                        <span className="text-xs font-semibold">Consultation Room Active</span>
                     </div>
                     <div className="absolute -bottom-4 -left-4 p-3.5 rounded-xl bg-card/90 backdrop-blur-md border border-border shadow-lg hidden sm:flex flex-col gap-1">
-                        <span className="text-[10px] text-muted-foreground">Next Reminder</span>
-                        <span className="text-[11px] font-bold">Dr. Patel checkup — 10:00 AM</span>
+                        <span className="text-xs text-muted-foreground">Next Reminder</span>
+                        <span className="text-xs font-bold">Dr. Patel checkup — 10:00 AM</span>
                     </div>
                 </motion.div>
             </div>

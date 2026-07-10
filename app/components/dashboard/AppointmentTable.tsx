@@ -11,7 +11,7 @@ export function AppointmentTable() {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-left text-xs">
+      <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="bg-muted/50 border-b border-border">
             <th className="p-4 font-bold text-foreground">Doctor</th>
@@ -37,7 +37,7 @@ export function AppointmentTable() {
                 </td>
                 <td className="p-4 text-muted-foreground truncate max-w-xs">{apt.symptoms}</td>
                 <td className="p-4">
-                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
+                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${
                     apt.status === "COMPLETED" 
                       ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
                       : apt.status === "CONFIRMED"

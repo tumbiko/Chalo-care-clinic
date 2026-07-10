@@ -29,12 +29,12 @@ export default function SignUp() {
             <Stethoscope className="w-6 h-6" />
           </div>
           <h2 className="text-xl font-black tracking-tight text-foreground">Create Account</h2>
-          <p className="text-xs text-muted-foreground">Create your patient account to book appointments and access care.</p>
+          <p className="text-sm text-muted-foreground">Create your patient account to book appointments and access care.</p>
         </div>
 
         {/* Action state error banner */}
         {state?.error && (
-          <div className="p-3.5 mb-6 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-start gap-2.5 animate-pulse">
+          <div className="p-3.5 mb-6 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-start gap-2.5 animate-pulse">
             <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
             <p className="leading-relaxed">{state.error}</p>
           </div>
@@ -42,7 +42,7 @@ export default function SignUp() {
 
         <form action={formAction} className="space-y-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Full Name</label>
+            <label className="text-xs font-bold text-foreground uppercase tracking-wider">Full Name</label>
             <div className="relative">
               <User className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
               <input
@@ -50,13 +50,13 @@ export default function SignUp() {
                 type="text"
                 required
                 placeholder="John Doe"
-                className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Email Address</label>
+            <label className="text-xs font-bold text-foreground uppercase tracking-wider">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
               <input
@@ -64,13 +64,13 @@ export default function SignUp() {
                 type="email"
                 required
                 placeholder="you@example.com"
-                className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Password</label>
+            <label className="text-xs font-bold text-foreground uppercase tracking-wider">Password</label>
             <div className="relative">
               <Key className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
               <input
@@ -78,7 +78,7 @@ export default function SignUp() {
                 type="password"
                 required
                 placeholder="••••••••"
-                className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full py-3 mt-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-md shadow-primary/10 flex items-center justify-center gap-1.5"
+            className="w-full py-3 mt-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-md shadow-primary/10 flex items-center justify-center gap-1.5"
           >
             {isPending ? "Creating Account..." : "Register Profile"}
             <ArrowRight className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function SignUp() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Already have an account?{" "}
             <Link href="/sign-in" className="text-primary font-bold hover:underline">
               Sign In

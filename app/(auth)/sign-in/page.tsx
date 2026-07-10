@@ -110,7 +110,7 @@ export default function SignIn() {
           <h2 className="text-xl font-black tracking-tight text-foreground">
             {showForgot ? "Reset Password" : "Welcome Back"}
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {showForgot
               ? "We'll help you get back into your account."
               : "Access your secured patient, clinician, or admin portal."}
@@ -128,7 +128,7 @@ export default function SignIn() {
               transition={{ duration: 0.25 }}
             >
               {state?.error && (
-                <div className="p-3.5 mb-6 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-start gap-2.5 animate-pulse">
+                <div className="p-3.5 mb-6 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-start gap-2.5 animate-pulse">
                   <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
                   <p className="leading-relaxed">{state.error}</p>
                 </div>
@@ -136,7 +136,7 @@ export default function SignIn() {
 
               <form action={formAction} className="space-y-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Email Address</label>
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
                     <input
@@ -144,18 +144,18 @@ export default function SignIn() {
                       type="email"
                       required
                       placeholder="you@example.com"
-                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Password</label>
+                    <label className="text-xs font-bold text-foreground uppercase tracking-wider">Password</label>
                     <button
                       type="button"
                       onClick={() => setForgotStep("request")}
-                      className="text-[10px] text-primary font-bold hover:underline"
+                      className="text-xs text-primary font-bold hover:underline"
                     >
                       Forgot password?
                     </button>
@@ -167,7 +167,7 @@ export default function SignIn() {
                       type="password"
                       required
                       placeholder="••••••••"
-                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export default function SignIn() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-md shadow-primary/10 flex items-center justify-center gap-1.5"
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-md shadow-primary/10 flex items-center justify-center gap-1.5"
                 >
                   {isPending ? "Verifying Credentials..." : "Authenticate Session"}
                   <ArrowRight className="w-4 h-4" />
@@ -183,7 +183,7 @@ export default function SignIn() {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Don&apos;t have an account?{" "}
                   <Link href="/sign-up" className="text-primary font-bold hover:underline">
                     Create Account
@@ -192,8 +192,8 @@ export default function SignIn() {
               </div>
 
               {/* Demo Credentials Box */}
-              <div className="mt-8 p-4 bg-muted/30 border border-border/40 rounded-2xl flex flex-col gap-2 text-[10px] leading-relaxed">
-                <span className="font-bold text-foreground uppercase text-[9px] tracking-wider text-cyan-600 dark:text-cyan-400">
+              <div className="mt-8 p-4 bg-muted/30 border border-border/40 rounded-2xl flex flex-col gap-2 text-xs leading-relaxed">
+                <span className="font-bold text-foreground uppercase text-xs tracking-wider text-cyan-600 dark:text-cyan-400">
                   Developer Access Credentials (Mock Fallback)
                 </span>
                 <div className="grid grid-cols-1 gap-1.5 text-muted-foreground">
@@ -216,24 +216,24 @@ export default function SignIn() {
             >
               <button
                 onClick={resetForgotFlow}
-                className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-foreground font-semibold mb-6 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-semibold mb-6 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
               </button>
 
-              <p className="text-xs text-muted-foreground mb-5 leading-relaxed">
+              <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
                 Enter the email address associated with your account and we&apos;ll generate a password reset link.
               </p>
 
               {forgotError && (
-                <div className="p-3 mb-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex gap-2">
+                <div className="p-3 mb-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex gap-2">
                   <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" /> {forgotError}
                 </div>
               )}
 
               <form onSubmit={handleForgotRequest} className="space-y-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Email Address</label>
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
                     <input
@@ -242,14 +242,14 @@ export default function SignIn() {
                       value={forgotEmail}
                       onChange={e => setForgotEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
                 <button
                   type="submit"
                   disabled={forgotLoading}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {forgotLoading ? (
                     <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Sending...</>
@@ -275,8 +275,8 @@ export default function SignIn() {
                 <div className="p-3 rounded-full bg-emerald-500/10 text-emerald-500">
                   <CheckCircle className="w-7 h-7" />
                 </div>
-                <h3 className="text-sm font-bold text-foreground">Reset Link Generated</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <h3 className="text-base font-bold text-foreground">Reset Link Generated</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   In production this would be emailed to <span className="font-bold text-foreground">{forgotEmail}</span>.
                   During development, use the token below to reset your password.
                 </p>
@@ -284,20 +284,20 @@ export default function SignIn() {
 
               {devToken && (
                 <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3">
-                  <p className="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase mb-1.5">Dev Token (expires in 1 hr)</p>
-                  <p className="text-[10px] font-mono text-foreground break-all">{devToken}</p>
+                  <p className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1.5">Dev Token (expires in 1 hr)</p>
+                  <p className="text-xs font-mono text-foreground break-all">{devToken}</p>
                 </div>
               )}
 
               <button
                 onClick={() => setForgotStep("reset")}
-                className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2"
               >
                 <Key className="w-3.5 h-3.5" /> Enter New Password
               </button>
               <button
                 onClick={resetForgotFlow}
-                className="w-full py-2 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                className="w-full py-2 rounded-xl border border-border text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
               >
                 Back to Sign In
               </button>
@@ -315,32 +315,32 @@ export default function SignIn() {
             >
               <button
                 onClick={() => setForgotStep("sent")}
-                className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-foreground font-semibold mb-6 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-semibold mb-6 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
 
               {forgotError && (
-                <div className="p-3 mb-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex gap-2">
+                <div className="p-3 mb-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex gap-2">
                   <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" /> {forgotError}
                 </div>
               )}
 
               <form onSubmit={handlePasswordReset} className="space-y-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Reset Token</label>
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">Reset Token</label>
                   <input
                     type="text"
                     required
                     value={resetToken}
                     onChange={e => setResetToken(e.target.value)}
                     placeholder="Paste the reset token here"
-                    className="w-full rounded-xl bg-muted/50 border border-border px-4 py-3 text-xs font-mono text-foreground focus:outline-none focus:border-primary transition-colors"
+                    className="w-full rounded-xl bg-muted/50 border border-border px-4 py-3 text-sm font-mono text-foreground focus:outline-none focus:border-primary transition-colors"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">New Password</label>
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">New Password</label>
                   <div className="relative">
                     <Key className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
                     <input
@@ -349,13 +349,13 @@ export default function SignIn() {
                       value={newPassword}
                       onChange={e => setNewPassword(e.target.value)}
                       placeholder="Min. 6 characters"
-                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-foreground uppercase tracking-wider">Confirm Password</label>
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">Confirm Password</label>
                   <div className="relative">
                     <Key className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
                     <input
@@ -364,7 +364,7 @@ export default function SignIn() {
                       value={confirmPassword}
                       onChange={e => setConfirmPassword(e.target.value)}
                       placeholder="Repeat new password"
-                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                      className="w-full rounded-xl bg-muted/50 border border-border pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
@@ -372,7 +372,7 @@ export default function SignIn() {
                 <button
                   type="submit"
                   disabled={forgotLoading}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {forgotLoading ? (
                     <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Updating...</>
@@ -397,12 +397,12 @@ export default function SignIn() {
                 <CheckCircle className="w-9 h-9" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-foreground">Password Updated!</h3>
-                <p className="text-xs text-muted-foreground mt-1">Your password has been changed. You can now sign in with your new credentials.</p>
+                <h3 className="text-base font-bold text-foreground">Password Updated!</h3>
+                <p className="text-sm text-muted-foreground mt-1">Your password has been changed. You can now sign in with your new credentials.</p>
               </div>
               <button
                 onClick={resetForgotFlow}
-                className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all flex items-center justify-center gap-2"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
               </button>

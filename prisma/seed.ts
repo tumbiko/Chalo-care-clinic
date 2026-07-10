@@ -25,20 +25,23 @@ function encrypt(text: string): string {
 async function main() {
   console.log("🌱 Seeding Chalo Care Clinic database...\n");
 
-  // Hash the default doctor password once
+  // Hash the default passwords once
   const defaultDoctorPassword = await bcrypt.hash("doctor123", 12);
+  const defaultAdminPassword = await bcrypt.hash("admin123", 12);
+  const defaultPatientPassword = await bcrypt.hash("patient123", 12);
 
   // ─── 1. USERS ──────────────────────────────────────────────────────────────
   console.log("👤 Creating users...");
 
   const admin = await prisma.user.upsert({
     where: { id: "admin-1" },
-    update: {},
+    update: { password: defaultAdminPassword },
     create: {
       id: "admin-1",
       email: "admin@chalocare.com",
       name: "Administrator",
       role: "ADMIN",
+      password: defaultAdminPassword,
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&fit=crop",
     },
   });
@@ -110,24 +113,26 @@ async function main() {
 
   const patAlex = await prisma.user.upsert({
     where: { id: "pat-1" },
-    update: {},
+    update: { password: defaultPatientPassword },
     create: {
       id: "pat-1",
       email: "alex@example.com",
       name: "Alex Rivera",
       role: "PATIENT",
+      password: defaultPatientPassword,
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&h=200&fit=crop",
     },
   });
 
   const patJames = await prisma.user.upsert({
     where: { id: "pat-2" },
-    update: {},
+    update: { password: defaultPatientPassword },
     create: {
       id: "pat-2",
       email: "james@example.com",
       name: "James Thompson",
       role: "PATIENT",
+      password: defaultPatientPassword,
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&fit=crop",
     },
   });

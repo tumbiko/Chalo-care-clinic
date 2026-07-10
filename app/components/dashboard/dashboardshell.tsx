@@ -110,7 +110,7 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
             <span className="text-base font-bold tracking-tight bg-gradient-to-r from-cyan-500 to-teal-500 bg-clip-text text-transparent">
               Chalo Care
             </span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-semibold">v1.0</span>
+            <span className="text-xs px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-semibold">v1.0</span>
           </Link>
 
           {/* User badge */}
@@ -119,8 +119,8 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
               {activeUser?.name?.charAt(0) || role.charAt(0)}
             </div>
             <div className="overflow-hidden">
-              <h4 className="text-xs font-bold truncate">{activeUser?.name || "Active Session"}</h4>
-              <p className="text-[9px] text-muted-foreground capitalize mt-0.5 font-semibold px-1.5 py-0.5 bg-muted rounded w-max">
+              <h4 className="text-sm font-bold truncate">{activeUser?.name || "Active Session"}</h4>
+              <p className="text-xs text-muted-foreground capitalize mt-0.5 font-semibold px-1.5 py-0.5 bg-muted rounded w-max">
                 {role.toLowerCase()}
               </p>
             </div>
@@ -132,10 +132,10 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
               <Link
                 key={item.label}
                 href={item.href}
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium hover:bg-muted text-muted-foreground hover:text-foreground transition-all group"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted text-muted-foreground hover:text-foreground transition-all group"
               >
                 <span>{item.label}</span>
-                <ChevronRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-cyan-500" />
+                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-cyan-500" />
               </Link>
             ))}
           </nav>
@@ -144,17 +144,17 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
         <div className="flex flex-col gap-4">
           {/* Demo role switcher */}
           <div className="p-3.5 rounded-xl bg-slate-900 border border-white/10 text-white flex flex-col gap-2">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-cyan-400">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-400">
               <Database className="w-3.5 h-3.5" />
               DEMO SWITCHER
             </div>
-            <p className="text-[9px] text-slate-300 leading-normal">Toggle dashboard roles:</p>
+            <p className="text-xs text-slate-300 leading-normal">Toggle dashboard roles:</p>
             <div className="grid grid-cols-3 gap-1 mt-1">
               {(["PATIENT", "DOCTOR", "ADMIN"] as const).map((r) => (
                 <button
                   key={r}
                   onClick={() => handleRoleSwap(r)}
-                  className={`py-1 rounded text-[9px] font-bold transition-all ${
+                  className={`py-1 rounded text-xs font-bold transition-all ${
                     role === r ? "bg-cyan-500 text-white" : "bg-white/10 hover:bg-white/20 text-slate-200"
                   }`}
                 >
@@ -166,7 +166,7 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
 
           <button
             onClick={handleLogout}
-            className="flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-bold text-rose-500 hover:bg-rose-500/10 transition-colors w-full"
+            className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold text-rose-500 hover:bg-rose-500/10 transition-colors w-full"
           >
             <span>Sign Out</span>
             <LogOut className="w-4 h-4" />
@@ -185,7 +185,7 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-sm font-bold tracking-tight flex items-center gap-1.5 capitalize">
+            <h1 className="text-base font-bold tracking-tight flex items-center gap-1.5 capitalize">
               <Activity className="w-4 h-4 text-cyan-500" />
               {role.toLowerCase()} Console
             </h1>
@@ -218,17 +218,17 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
               {showNotif && (
                 <div className="absolute right-0 mt-3 w-80 rounded-xl bg-card border border-border shadow-xl p-4 z-50 flex flex-col gap-3 max-h-[350px] overflow-y-auto">
                   <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                    <h5 className="text-xs font-bold">Notifications</h5>
-                    <span className="text-[10px] text-muted-foreground">Recent events</span>
+                    <h5 className="text-sm font-bold">Notifications</h5>
+                    <span className="text-xs text-muted-foreground">Recent events</span>
                   </div>
                   {notifications.length === 0 ? (
-                    <p className="text-[11px] text-muted-foreground text-center py-4">No new notifications.</p>
+                    <p className="text-sm text-muted-foreground text-center py-4">No new notifications.</p>
                   ) : (
                     <div className="flex flex-col gap-2.5">
                       {notifications.map((n) => (
-                        <div key={n.id} className="p-2 rounded bg-muted/30 text-[11px] leading-normal text-muted-foreground border-l-2 border-cyan-500">
+                        <div key={n.id} className="p-2 rounded bg-muted/30 text-xs leading-normal text-muted-foreground border-l-2 border-cyan-500">
                           <p className="text-foreground font-medium">{n.text}</p>
-                          <span className="text-[9px] text-muted-foreground mt-0.5 block">{n.time}</span>
+                          <span className="text-[10px] text-muted-foreground mt-0.5 block">{n.time}</span>
                         </div>
                       ))}
                     </div>
@@ -277,8 +277,8 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
                     {activeUser?.name?.charAt(0) || "U"}
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold">{activeUser?.name || "Active Session"}</h4>
-                    <span className="text-[9px] font-bold bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded capitalize">
+                    <h4 className="text-sm font-bold">{activeUser?.name || "Active Session"}</h4>
+                    <span className="text-xs font-bold bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded capitalize">
                       {role.toLowerCase()}
                     </span>
                   </div>
@@ -290,7 +290,7 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
                       key={item.label}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="px-3 py-3 rounded-xl text-xs font-semibold hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                      className="px-3 py-3 rounded-xl text-sm font-semibold hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -300,13 +300,13 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
 
               <div className="flex flex-col gap-4 pt-4">
                 <div className="p-3.5 rounded-xl bg-slate-900 border border-white/10 text-white flex flex-col gap-2">
-                  <span className="text-[10px] font-bold text-cyan-400">DEMO SWITCHER</span>
+                  <span className="text-xs font-bold text-cyan-400">DEMO SWITCHER</span>
                   <div className="grid grid-cols-3 gap-1">
                     {(["PATIENT", "DOCTOR", "ADMIN"] as const).map((r) => (
                       <button
                         key={r}
                         onClick={() => { handleRoleSwap(r); setMobileMenuOpen(false); }}
-                        className={`py-1 rounded text-[9px] font-bold ${role === r ? "bg-cyan-500 text-white" : "bg-white/10 hover:bg-white/20 text-slate-200"}`}
+                        className={`py-1 rounded text-xs font-bold ${role === r ? "bg-cyan-500 text-white" : "bg-white/10 hover:bg-white/20 text-slate-200"}`}
                       >
                         {r.charAt(0) + r.slice(1).toLowerCase()}
                       </button>
@@ -315,7 +315,7 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
                 </div>
                 <button
                   onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
-                  className="flex items-center justify-between px-3 py-3 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-500/10 w-full"
+                  className="flex items-center justify-between px-3 py-3 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-500/10 w-full"
                 >
                   <span>Sign Out</span>
                   <LogOut className="w-5 h-5" />

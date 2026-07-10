@@ -24,8 +24,8 @@ export function WeeklyRevenueChart() {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={adminAnalytics.weeklyRevenue}>
           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-          <XAxis dataKey="name" stroke="#888888" fontSize={11} tickLine={false} axisLine={false} />
-          <YAxis stroke="#888888" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+          <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+          <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
           <Tooltip 
             contentStyle={{ backgroundColor: "hsl(var(--card))", borderColor: "hsl(var(--border))", borderRadius: "10px" }}
             labelStyle={{ color: "hsl(var(--foreground))", fontWeight: "bold" }}
@@ -60,7 +60,7 @@ export function SpecialtyDistributionChart() {
             contentStyle={{ backgroundColor: "hsl(var(--card))", borderColor: "hsl(var(--border))", borderRadius: "10px" }}
             labelStyle={{ color: "hsl(var(--foreground))" }}
           />
-          <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: 10 }} />
+          <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: 12 }} />
         </PieChart>
       </ResponsiveContainer>
     </div>
