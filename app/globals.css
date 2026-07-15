@@ -161,11 +161,17 @@
   background: rgba(100, 116, 139, 0.4);
 }
 
+html {
+  background-color: hsl(var(--background));
+  overscroll-behavior: none;
+}
+
 body {
   font-family: var(--font-plus-jakarta), sans-serif;
-  background-color: var(--background);
+  background-color: hsl(var(--background));
   color: var(--foreground);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   overflow-x: hidden;
+  overscroll-behavior: none;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
