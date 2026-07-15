@@ -13,13 +13,13 @@ async function findUserByEmail(email: string) {
       where: { email },
     });
     return user;
-  } catch (error) {
+  } catch {
     console.warn("Database query failed, trying mock fallback registry...");
     return null;
   }
 }
 
-export async function signUpAction(prevState: any, formData: FormData) {
+export async function signUpAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -58,7 +58,7 @@ export async function signUpAction(prevState: any, formData: FormData) {
       email: user.email,
       role: user.role,
     });
-  } catch (error) {
+  } catch {
     console.warn("Prisma database is not initialized or configured. Proceeding in Mock Session Mode.");
 
     // Fallback: Mock Sign Up success
@@ -73,7 +73,7 @@ export async function signUpAction(prevState: any, formData: FormData) {
   redirect(`/${role.toLowerCase()}`);
 }
 
-export async function signInAction(prevState: any, formData: FormData) {
+export async function signInAction(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -106,7 +106,7 @@ export async function signInAction(prevState: any, formData: FormData) {
         redirect(`/${user.role.toLowerCase()}`);
       }
     }
-  } catch (error) {
+  } catch {
     console.warn("Live DB authentication failed or connection timed out, checking mock registry...");
   }
 

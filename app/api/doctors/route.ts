@@ -1,8 +1,41 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { mockDoctors } from "@/lib/mockData";
 
 const DEFAULT_DOCTOR_PASSWORD = "doctor123";
+
+export async function GET() {
+  try {
+    const doctors = await db.user.findMany({
+      where: { role: "DOCTOR" },
+      include: { doctorProfile: true },
+    });
+
+    const mappedDoctors = doctors.map((doc) => {
+      const profile = doc.doctorProfile;
+      return {
+        id: doc.id,
+        name: doc.name || "",
+        email: doc.email,
+        specialization: profile?.specialization || "General Practitioner",
+        bio: profile?.bio || "",
+        fee: profile?.fee || 50,
+        rating: profile?.rating || 5.0,
+        experience: profile?.experience || 3,
+        avatar: doc.avatar || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&h=200&fit=crop",
+        isAvailable: profile?.isAvailable ?? true,
+        slots: profile?.slots ? profile.slots.split(",").map((s) => s.trim()) : ["09:00 AM", "10:30 AM", "02:00 PM"],
+      };
+    });
+
+    return NextResponse.json(mappedDoctors);
+  } catch (error) {
+    console.warn("Database doctor query failed, using mockDoctors fallback:", error);
+    return NextResponse.json(mockDoctors);
+  }
+}
+
 
 export async function POST(request: Request) {
   try {
@@ -28,7 +61,6 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(DEFAULT_DOCTOR_PASSWORD, 12);
 
     // Create the User record
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const user = await db.user.create({
       data: {
         name,
@@ -36,7 +68,7 @@ export async function POST(request: Request) {
         password: hashedPassword,
         role: "DOCTOR",
         avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&h=200&fit=crop",
-      } as any,
+      },
     });
 
     // Create the DoctorProfile record

@@ -59,7 +59,13 @@ function PatientDashboardContent() {
 
   // Symptom checker states
   const [symptomText, setSymptomText] = useState("");
-  const [checkerResult, setCheckerResult] = useState<any>(null);
+  const [checkerResult, setCheckerResult] = useState<{
+    specialty: string;
+    recommendedDoctor: string;
+    severity: "LOW" | "MEDIUM" | "HIGH";
+    urgency: string;
+    advice: string[];
+  } | null>(null);
 
   // Secure Vault states
   const [encryptedFiles, setEncryptedFiles] = useState<Array<{ id: string; name: string; date: string; content: string; decrypted: boolean; key: string }>>([
@@ -135,6 +141,7 @@ function PatientDashboardContent() {
   // Set default chat doctor if none selected
   useEffect(() => {
     if (!chatDoctorId && doctors.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setChatDoctorId(doctors[0].id);
     }
   }, [doctors, chatDoctorId]);
@@ -312,6 +319,43 @@ function PatientDashboardContent() {
                   )}
                 </button>
               </form>
+            </div>
+
+            {/* Your Booked Appointments List */}
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col gap-4">
+              <h3 className="font-bold text-base text-foreground border-b border-border/50 pb-3.5">
+                Your Booked Appointments
+              </h3>
+              
+              {appointments.filter(a => a.patientId === activeUser?.id).length === 0 ? (
+                <p className="text-xs text-muted-foreground py-2">No appointments booked yet.</p>
+              ) : (
+                <div className="flex flex-col gap-3 max-h-[250px] overflow-y-auto pr-1">
+                  {appointments
+                    .filter(a => a.patientId === activeUser?.id)
+                    .map(apt => (
+                      <div key={apt.id} className="p-3 rounded-xl border border-border/60 bg-muted/10 flex flex-col gap-1.5 text-xs">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-foreground">{apt.doctorName}</span>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            apt.status === "COMPLETED" 
+                              ? "bg-emerald-500/15 text-emerald-500" 
+                              : apt.status === "CONFIRMED"
+                              ? "bg-cyan-500/15 text-cyan-500"
+                              : "bg-amber-500/15 text-amber-500"
+                          }`}>
+                            {apt.status}
+                          </span>
+                        </div>
+                        <p className="text-muted-foreground">{apt.doctorSpecialization}</p>
+                        <div className="flex items-center gap-1.5 mt-1 text-muted-foreground font-medium">
+                          <Clock className="w-3.5 h-3.5 text-cyan-500" />
+                          {new Date(apt.dateTime).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
 

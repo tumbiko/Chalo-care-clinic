@@ -94,7 +94,7 @@ export const mockDoctors: MockDoctor[] = [
     fee: 90,
     rating: 5.0,
     experience: 15,
-    avatar: "https://images.unsplash.com/photo-1594824813573-246434de83fb?q=80&w=200&h=200&fit=crop",
+    avatar: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=200&h=200&fit=crop",
     isAvailable: true,
     slots: ["08:00 AM", "10:00 AM", "12:00 PM", "03:00 PM", "04:30 PM"]
   },

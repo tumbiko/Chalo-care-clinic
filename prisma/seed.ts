@@ -74,14 +74,14 @@ async function main() {
 
   const docElena = await prisma.user.upsert({
     where: { id: "doc-3" },
-    update: { password: defaultDoctorPassword },
+    update: { password: defaultDoctorPassword, avatar: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=200&h=200&fit=crop" },
     create: {
       id: "doc-3",
       email: "elena.rostova@chalocare.com",
       name: "Dr. Elena Rostova",
       role: "DOCTOR",
       password: defaultDoctorPassword,
-      avatar: "https://images.unsplash.com/photo-1594824813573-246434de83fb?q=80&w=200&h=200&fit=crop",
+      avatar: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=200&h=200&fit=crop",
     },
   });
 

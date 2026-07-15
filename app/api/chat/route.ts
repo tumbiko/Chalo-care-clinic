@@ -4,7 +4,7 @@ import { encrypt, decrypt } from "@/lib/encrypt";
 import { mockChatMessages } from "@/lib/mockData";
 
 // In-memory fallback for local mock mode when DB is not reachable
-let inMemoryMessages = [...mockChatMessages];
+const inMemoryMessages = [...mockChatMessages];
 
 // Helper to ensure user exists in the database
 async function ensureUserExists(id: string) {

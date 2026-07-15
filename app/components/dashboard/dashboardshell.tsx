@@ -27,7 +27,7 @@ interface DashboardShellProps {
 export default function DashboardShell({ children, role }: DashboardShellProps) {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const { activeUser, setActiveUser, notifications, markNotificationsAsRead } = useQueueStore();
+  const { activeUser, setActiveUser, notifications, markNotificationsAsRead, fetchInitialData } = useQueueStore();
   const [showNotif, setShowNotif] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -42,7 +42,10 @@ export default function DashboardShell({ children, role }: DashboardShellProps) 
         }
       })
       .catch(() => {});
-  }, [setActiveUser]);
+
+    // Fetch doctors, appointments, and queue entries from the database
+    fetchInitialData();
+  }, [setActiveUser, fetchInitialData]);
 
   const handleLogout = async () => {
     setActiveUser(null);

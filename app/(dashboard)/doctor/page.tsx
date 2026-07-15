@@ -172,7 +172,7 @@ function DoctorDashboardContent() {
               <span className="text-xs text-muted-foreground uppercase font-bold">Pending Slots</span>
               <div className="flex justify-between items-baseline mt-2">
                 <h3 className="text-3xl font-black text-foreground">{pendingCount}</h3>
-                <span className="text-xs text-cyan-500 font-bold">Today's schedule</span>
+                <span className="text-xs text-cyan-500 font-bold">Today&apos;s schedule</span>
               </div>
             </div>
 
@@ -263,7 +263,7 @@ function DoctorDashboardContent() {
               {/* Daily schedule listing */}
               <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
                 <h3 className="font-bold text-base text-foreground border-b border-border/50 pb-4">
-                  Today's Schedule ({doctorAppointments.filter(a => a.status === "CONFIRMED").length})
+                  Today&apos;s Schedule ({doctorAppointments.filter(a => a.status === "CONFIRMED").length})
                 </h3>
                 
                 <div className="flex flex-col gap-4 mt-6">

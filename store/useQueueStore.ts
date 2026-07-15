@@ -35,10 +35,31 @@ interface QueueState {
   markNotificationsAsRead: () => void;
   sendMessage: (senderId: string, receiverId: string, content: string) => Promise<void>;
   fetchMessages: (senderId: string, receiverId: string) => Promise<void>;
-  advanceQueue: (doctorId: string) => void;
-  completeAppointment: (aptId: string, diagnosis: string, prescription: string) => void;
-  bookAppointment: (doctorId: string, slot: string, symptoms: string) => void;
-  checkIntoQueue: (patientId: string, doctorId: string) => void;
+  advanceQueue: (doctorId: string) => Promise<void>;
+  completeAppointment: (aptId: string, diagnosis: string, prescription: string) => Promise<void>;
+  bookAppointment: (doctorId: string, slot: string, symptoms: string) => Promise<void>;
+  checkIntoQueue: (patientId: string, doctorId: string) => Promise<void>;
+  fetchDoctors: () => Promise<void>;
+  fetchAppointments: () => Promise<void>;
+  fetchQueue: () => Promise<void>;
+  fetchInitialData: () => Promise<void>;
+}
+
+function parseSlotToTime24h(slot: string): string {
+  const match = slot.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) return "09:00";
+  let hour = parseInt(match[1], 10);
+  const minute = match[2];
+  const ampm = match[3].toUpperCase();
+
+  if (ampm === "PM" && hour < 12) {
+    hour += 12;
+  } else if (ampm === "AM" && hour === 12) {
+    hour = 0;
+  }
+
+  const hourStr = hour.toString().padStart(2, "0");
+  return `${hourStr}:${minute}`;
 }
 
 export const useQueueStore = create<QueueState>((set) => ({
@@ -90,7 +111,6 @@ export const useQueueStore = create<QueueState>((set) => ({
       createdAt: new Date().toISOString()
     };
 
-    // Optimistically show in local store first
     set((state) => ({
       messages: [...state.messages, optimisticMsg]
     }));
@@ -119,7 +139,6 @@ export const useQueueStore = create<QueueState>((set) => ({
       if (res.ok) {
         const newMsgs = await res.json();
         set((state) => {
-          // Filter out existing messages between these two users to avoid duplicates
           const otherMsgs = state.messages.filter(
             m => !((m.senderId === senderId && m.receiverId === receiverId) ||
                    (m.senderId === receiverId && m.receiverId === senderId))
@@ -134,7 +153,49 @@ export const useQueueStore = create<QueueState>((set) => ({
     }
   },
 
-  advanceQueue: (doctorId) => set((state) => {
+  fetchDoctors: async () => {
+    try {
+      const res = await fetch("/api/doctors");
+      if (res.ok) {
+        const data = await res.json();
+        set({ doctors: data });
+      }
+    } catch (error) {
+      console.error("Failed to fetch doctors via API:", error);
+    }
+  },
+
+  fetchAppointments: async () => {
+    try {
+      const res = await fetch("/api/appointments");
+      if (res.ok) {
+        const data = await res.json();
+        set({ appointments: data });
+      }
+    } catch (error) {
+      console.error("Failed to fetch appointments via API:", error);
+    }
+  },
+
+  fetchQueue: async () => {
+    try {
+      const res = await fetch("/api/queue");
+      if (res.ok) {
+        const data = await res.json();
+        set({ queue: data });
+      }
+    } catch (error) {
+      console.error("Failed to fetch queue entries via API:", error);
+    }
+  },
+
+  fetchInitialData: async () => {
+    const { fetchDoctors, fetchAppointments, fetchQueue } = useQueueStore.getState();
+    await Promise.all([fetchDoctors(), fetchAppointments(), fetchQueue()]);
+  },
+
+  advanceQueue: async (doctorId) => {
+    const state = useQueueStore.getState();
     const docQueue = state.queue.filter(q => q.doctorId === doctorId && q.status !== "COMPLETED" && q.status !== "SKIPPED");
     const activeEntry = docQueue.find(q => q.status === "ACTIVE");
     const nextWaiting = docQueue.find(q => q.status === "WAITING");
@@ -161,22 +222,39 @@ export const useQueueStore = create<QueueState>((set) => ({
       });
     }
 
-    return {
+    set({
       queue: newQueue,
       notifications: addedNotifications
-    };
-  }),
+    });
 
-  completeAppointment: (aptId, diagnosis, prescription) => set((state) => {
+    try {
+      const res = await fetch("/api/queue", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ doctorId, action: "advance" })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.queue) {
+          set({ queue: data.queue });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to advance queue via API:", error);
+    }
+  },
+
+  completeAppointment: async (aptId, diagnosis, prescription) => {
+    const state = useQueueStore.getState();
+    const apt = state.appointments.find(a => a.id === aptId);
+    
     const newApts = state.appointments.map(a => 
       a.id === aptId 
         ? { ...a, status: "COMPLETED" as const, diagnosis, prescription } 
         : a
     );
     
-    const apt = state.appointments.find(a => a.id === aptId);
     let newQueue = state.queue;
-    
     if (apt) {
       newQueue = state.queue.map(q => 
         (q.patientId === apt.patientId && q.doctorId === apt.doctorId && q.status === "ACTIVE")
@@ -188,7 +266,7 @@ export const useQueueStore = create<QueueState>((set) => ({
     const doctorName = apt ? apt.doctorName : "Doctor";
     const patientName = apt ? apt.patientName : "Patient";
 
-    return {
+    set({
       appointments: newApts,
       queue: newQueue,
       notifications: [
@@ -200,23 +278,59 @@ export const useQueueStore = create<QueueState>((set) => ({
         },
         ...state.notifications
       ]
-    };
-  }),
+    });
 
-  bookAppointment: (doctorId, slot, symptoms) => set((state) => {
-    if (!state.activeUser) return {};
+    try {
+      const aptRes = await fetch("/api/appointments", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: aptId, status: "COMPLETED", diagnosis, prescription })
+      });
+
+      if (apt) {
+        const activeQueueEntry = state.queue.find(
+          q => q.patientId === apt.patientId && q.doctorId === apt.doctorId && q.status === "ACTIVE"
+        );
+        if (activeQueueEntry) {
+          await fetch("/api/queue", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: activeQueueEntry.id, status: "COMPLETED" })
+          });
+        }
+      }
+
+      if (aptRes.ok) {
+        const { fetchAppointments, fetchQueue } = useQueueStore.getState();
+        await Promise.all([fetchAppointments(), fetchQueue()]);
+      }
+    } catch (error) {
+      console.error("Failed to complete appointment via API:", error);
+    }
+  },
+
+  bookAppointment: async (doctorId, slot, symptoms) => {
+    const state = useQueueStore.getState();
+    if (!state.activeUser) return;
     const doctor = state.doctors.find(d => d.id === doctorId);
-    if (!doctor) return {};
+    if (!doctor) return;
     
-    const newApt: MockAppointment = {
-      id: `apt-${Date.now()}`,
+    const timeStr = parseSlotToTime24h(slot);
+    const today = new Date();
+    const dateTimeStr = `${today.toISOString().split("T")[0]}T${timeStr}:00.000Z`;
+
+    const tempAptId = `apt-${Date.now()}`;
+    const tempQueId = `que-${Date.now()}`;
+
+    const optimisticApt: MockAppointment = {
+      id: tempAptId,
       patientId: state.activeUser.id,
       patientName: state.activeUser.name,
       doctorId,
       doctorName: doctor.name,
       doctorSpecialization: doctor.specialization,
       doctorAvatar: doctor.avatar,
-      dateTime: new Date().toISOString().split('T')[0] + `T${slot.includes("AM") ? "09:00" : "14:00"}:00.000Z`, 
+      dateTime: dateTimeStr,
       status: "CONFIRMED",
       type: "VIRTUAL",
       symptoms
@@ -225,8 +339,8 @@ export const useQueueStore = create<QueueState>((set) => ({
     const docQueue = state.queue.filter(q => q.doctorId === doctorId && (q.status === "WAITING" || q.status === "ACTIVE"));
     const nextNumber = docQueue.length + 1;
     
-    const newQueueEntry: MockQueueEntry = {
-      id: `que-${Date.now()}`,
+    const optimisticQueueEntry: MockQueueEntry = {
+      id: tempQueId,
       patientId: state.activeUser.id,
       patientName: state.activeUser.name,
       doctorId,
@@ -237,9 +351,9 @@ export const useQueueStore = create<QueueState>((set) => ({
       checkInTime: new Date().toISOString()
     };
 
-    return {
-      appointments: [...state.appointments, newApt],
-      queue: [...state.queue, newQueueEntry],
+    set((state) => ({
+      appointments: [...state.appointments, optimisticApt],
+      queue: [...state.queue, optimisticQueueEntry],
       notifications: [
         { 
           id: `notif-${Date.now()}`, 
@@ -249,19 +363,56 @@ export const useQueueStore = create<QueueState>((set) => ({
         },
         ...state.notifications
       ]
-    };
-  }),
+    }));
 
-  checkIntoQueue: (patientId, doctorId) => set((state) => {
+    try {
+      const aptRes = await fetch("/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          patientId: state.activeUser.id,
+          doctorId,
+          dateTime: dateTimeStr,
+          type: "VIRTUAL",
+          symptoms
+        })
+      });
+
+      const queRes = await fetch("/api/queue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          patientId: state.activeUser.id,
+          doctorId
+        })
+      });
+
+      if (aptRes.ok && queRes.ok) {
+        const savedApt = await aptRes.json();
+        const savedQue = await queRes.json();
+
+        set((state) => ({
+          appointments: state.appointments.map(a => a.id === tempAptId ? savedApt : a),
+          queue: state.queue.map(q => q.id === tempQueId ? savedQue : q)
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to book appointment via API:", error);
+    }
+  },
+
+  checkIntoQueue: async (patientId, doctorId) => {
+    const state = useQueueStore.getState();
     const patient = state.patients.find(p => p.id === patientId) || state.activeUser;
     const doctor = state.doctors.find(d => d.id === doctorId);
-    if (!patient || !doctor) return {};
+    if (!patient || !doctor) return;
 
+    const tempQueId = `que-${Date.now()}`;
     const docQueue = state.queue.filter(q => q.doctorId === doctorId && (q.status === "WAITING" || q.status === "ACTIVE"));
     const nextNumber = docQueue.length + 1;
 
-    const newQueueEntry: MockQueueEntry = {
-      id: `que-${Date.now()}`,
+    const optimisticQueueEntry: MockQueueEntry = {
+      id: tempQueId,
       patientId: patient.id,
       patientName: patient.name,
       doctorId,
@@ -272,8 +423,8 @@ export const useQueueStore = create<QueueState>((set) => ({
       checkInTime: new Date().toISOString()
     };
 
-    return {
-      queue: [...state.queue, newQueueEntry],
+    set((state) => ({
+      queue: [...state.queue, optimisticQueueEntry],
       notifications: [
         { 
           id: `notif-${Date.now()}`, 
@@ -283,6 +434,22 @@ export const useQueueStore = create<QueueState>((set) => ({
         },
         ...state.notifications
       ]
-    };
-  })
+    }));
+
+    try {
+      const res = await fetch("/api/queue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ patientId: patient.id, doctorId })
+      });
+      if (res.ok) {
+        const savedQue = await res.json();
+        set((state) => ({
+          queue: state.queue.map(q => q.id === tempQueId ? savedQue : q)
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to check into queue via API:", error);
+    }
+  }
 }));

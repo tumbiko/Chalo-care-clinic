@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQueueStore } from "@/store/useQueueStore";
 import DashboardShell from "@/app/components/dashboard/dashboardshell";
 import { WeeklyRevenueChart, SpecialtyDistributionChart } from "@/app/components/dashboard/adminstats";
-import { adminAnalytics } from "@/lib/mockData";
+import { adminAnalytics, MockDoctor } from "@/lib/mockData";
 import { 
   Users, 
   UserCheck, 
@@ -281,7 +281,7 @@ function AdminDashboardContent() {
                         </div>
                       </div>
                     </td>
-                    <td className="p-4 text-muted-foreground">{(doc as any).email || "—"}</td>
+                    <td className="p-4 text-muted-foreground">{(doc as MockDoctor & { email?: string }).email || "—"}</td>
                     <td className="p-4 text-muted-foreground font-medium">{doc.specialization}</td>
                     <td className="p-4 font-bold text-foreground">${doc.fee}</td>
                     <td className="p-4">
